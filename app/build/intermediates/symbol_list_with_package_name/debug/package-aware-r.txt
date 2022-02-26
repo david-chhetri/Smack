@@ -1206,6 +1206,7 @@ id center
 id center_horizontal
 id center_vertical
 id chains
+id channel_list
 id checkbox
 id chronometer
 id clip_horizontal
@@ -1264,6 +1265,7 @@ id largeLabel
 id left
 id line1
 id line3
+id linearLayout
 id listMode
 id list_item
 id masked
@@ -1275,6 +1277,7 @@ id mtrl_child_content_container
 id mtrl_internal_children_alpha_tag
 id multiply
 id nav_controller_view_tag
+id nav_drawer_header_include
 id nav_gallery
 id nav_home
 id nav_home_second
@@ -1359,6 +1362,7 @@ id textSpacerNoButtons
 id textSpacerNoTitle
 id textStart
 id textView
+id textView2
 id text_gallery
 id text_home
 id text_input_password_toggle
