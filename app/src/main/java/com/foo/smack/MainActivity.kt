@@ -48,6 +48,9 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+    fun sendMsgBtnClicked(view: View){
+
+    }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
