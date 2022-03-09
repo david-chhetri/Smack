@@ -10,6 +10,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.foo.smack.Utilities.URL_LOGIN
 import com.foo.smack.Utilities.URL_REGISTER
+import kotlinx.android.synthetic.main.activity_create_user.*
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -50,34 +51,35 @@ object AuthService {
 
     }
 
-    fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit){
+
+    //The purpose is to build a service
+    fun loginUser(context: Context, email: String,password: String, complete: (Boolean) -> Unit){
 
         val jsonBody = JSONObject()
         jsonBody.put("email", email)
         jsonBody.put("password", password)
 
         val requestBody = jsonBody.toString()
-
-        val loginRequest = object: JsonObjectRequest(Method.POST, URL_LOGIN,null, Response.Listener {
-            response ->
-
+        //val loginRequest = object: JsonObjectRequest(Method.POST, URL_LOGIN,null,
+        val loginRequest = object : JsonObjectRequest(Method.POST,URL_LOGIN,null,Response.Listener { response ->
+            //parse json response
             try {
                 userEmail = response.getString("user")
                 authToken = response.getString("token")
-                isLoggedIn = true
+                println("email : $userEmail")
+                println("authToken: $authToken")
                 complete(true)
-            }catch (e: JSONException ){
+                isLoggedIn = true
+            }catch (ex: JSONException){
+                Log.d("MSG :",ex.toString())
                 complete(false)
-                Log.d("JSON", "EXC : " + e.localizedMessage)
             }
-
-        }, Response.ErrorListener {
-            error ->
-            Log.d("ERROR", "Not registered: $error")
+        }, Response.ErrorListener {error ->
+            Log.d("ERROR", "$error" )
             complete(false)
+            isLoggedIn = false
 
         }){
-
             override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"
             }
@@ -87,7 +89,9 @@ object AuthService {
             }
 
         }
+
         Volley.newRequestQueue(context).add(loginRequest)
+
     }
 
 

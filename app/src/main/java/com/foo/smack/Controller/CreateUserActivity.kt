@@ -49,26 +49,30 @@ class CreateUserActivity : AppCompatActivity() {
         avatarColor = "[$savedR, $savedG, $savedB, 1]"
     }
 
-    fun createUserClicked(view: View){
-        val email = createEmailTxt.text.toString()
-        val password = createPasswordTxt.text.toString()
 
-        AuthService.registerUser(this,email, password){registerSuccess ->
+    fun createUserClicked(view: View){
+
+        val email = createEmailTxt.text.toString()
+        val password =createPasswordTxt.text.toString()
+
+        AuthService.registerUser(this,email,password){registerSuccess ->
             if(registerSuccess){
-                AuthService.loginUser(this, email,password){loginSuccess ->
+                AuthService.loginUser(this,email,password){loginSuccess ->
                     if(loginSuccess){
-                        println(AuthService.authToken)
                         println(AuthService.userEmail)
+                        println(AuthService.authToken)
                     }else{
-                        //login not successful
+                        //not logged in
                     }
 
                 }
-            } else{
-                //register not successful
-            }
 
+            }else{
+                // register not success
+            }
         }
 
     }
+
+
 }
