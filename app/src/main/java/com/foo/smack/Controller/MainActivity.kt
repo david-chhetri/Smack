@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         if(AuthService.isLoggedIn){
             //already logged in so now log out as button says logout
             UserDataService.logout()
-            userNameNavHeader.text = "Login"
+            userNameNavHeader.text = ""
             userEmailNavHeader.text = ""
             loginBtnNavHeader.text = "LOGIN"
             userimageNavHeader.setImageResource(R.drawable.profiledefault)
