@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -36,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        //hiding soft keyboard from message field on start
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
 
