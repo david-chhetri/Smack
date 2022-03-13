@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.foo.smack.R
@@ -113,5 +114,6 @@ class CreateUserActivity : AppCompatActivity() {
         backgroundColorBtn.isEnabled = !enable
 
     }
+
 
 }

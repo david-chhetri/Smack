@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,8 +21,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun loginLoginBtnClicked(view: View) {
+        //hiding soft keyboard from message field on start
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        hideKeyboard()
         enableSpinner(true)
-        //hideKeyboard()
+
         val email = loginEmailTxt.text.toString().trim()
         val password = loginPasswordTxt.text.toString().trim()
         if (email.isNotEmpty() && password.isNotEmpty()) {
@@ -30,7 +34,7 @@ class LoginActivity : AppCompatActivity() {
                     AuthService.findUserByEmail(this) { findingUserSuccess ->
                         if (findingUserSuccess) {
                             enableSpinner(false)
-                            finish()
+                             finish()
                         } else {
                             errorToast()
                         }
@@ -71,10 +75,11 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-/*    fun hideKeyboard(){
+
+    fun hideKeyboard(){
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if(inputManager.isAcceptingText){
             inputManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
         }
-    }*/
+    }
 }
