@@ -24,12 +24,16 @@ import com.foo.smack.R
 import com.foo.smack.Services.AuthService
 import com.foo.smack.Services.UserDataService
 import com.foo.smack.Utilities.BROADCAST_USER_DATA_CHANGE
+import com.foo.smack.Utilities.SOCKET_URL
 import com.google.android.material.navigation.NavigationView
+import io.socket.client.IO
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 
 class MainActivity : AppCompatActivity() {
+
+    val socket = IO.socket(SOCKET_URL)
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -39,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        hideKeyboard()
+        //hideKeyboard()
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
 
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -55,11 +59,25 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+
+    }
+
+
+    override fun onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
-            IntentFilter(BROADCAST_USER_DATA_CHANGE)
-        )
+            IntentFilter(BROADCAST_USER_DATA_CHANGE))
+        socket.connect()
+        super.onResume()
+    }
 
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
+    }
 
+    override fun onDestroy() {
+        socket.disconnect()
+        super.onDestroy()
     }
 
     private val userDataChangeReceiver = object: BroadcastReceiver(){
@@ -95,33 +113,36 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
     fun addChannelClicked(view: View){
-        if(AuthService.isLoggedIn){
+        if(AuthService.isLoggedIn) {
+            //create channel and description
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.add_chhanel_dialog, null)
 
-            builder.setView(dialogView)
-                .setPositiveButton("Add"){ dialog: DialogInterface?, which: Int ->
+            builder.setView(dialogView).setPositiveButton("Add") { dialog, which ->
+                //grab channel name & description here
+                val nameTextView = dialogView.findViewById<EditText>(R.id.addChannelNameTxt)
+                val descTextView = dialogView.findViewById<EditText>(R.id.addChannelDescTxt)
 
-                    val nameTextField = dialogView.findViewById<EditText>(R.id.addChannelNameTxt)
-                    val descTextFied = dialogView.findViewById<EditText>(R.id.addChannelDescTxt)
-                    val channelName = nameTextField.text.toString()
-                    val channelDesc = descTextFied.text.toString()
-                    //create channel with channel name & Description
+                val channelName = nameTextView.text.toString()
+                val channelDesc = descTextView.text.toString()
+                //println("Dave: $channelName desc: $channelDesc")
+                //sending information from client to API
+                socket.emit("newChannel", channelName, channelDesc)
 
-                }
-                .setNegativeButton("Cancel"){dialog: DialogInterface?, which: Int ->
 
-                }
-                .show()
+            }.setNegativeButton("Cancel") { dialog, which ->
+
+            }.show()
         }
-
-
     }
+
+
+
     fun sendMsgBtnClicked(view: View){
-
+        hideKeyboard()
     }
-
 
 
     override fun onSupportNavigateUp(): Boolean {
@@ -129,12 +150,6 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        //hiding soft keyboard from message field on start
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-    }
 
     fun hideKeyboard(){
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

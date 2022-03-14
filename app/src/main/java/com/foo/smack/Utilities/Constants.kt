@@ -3,7 +3,7 @@ package com.foo.smack.Utilities
 /**
  * Created by David Chhetri on 08,March,2022
  */
-
+//const val BASE_URL="https://devslopes-chattin.herokuapp.com/v1/"
 //const val BASE_URL="http://10.0.1.6:3005/v1/"
 
 //10.0.2.2 is default address android looks for from emulator
@@ -15,3 +15,6 @@ const val URL_GET_USER= "${BASE_URL}user/byEmail/"
 
 //Broadcast Constants
 const val BROADCAST_USER_DATA_CHANGE = "BROADCAST_USER_DATA_CHANGE"
+
+//same as BASE_URL minus v1/
+const val SOCKET_URL="http://10.0.2.2:3005/"
