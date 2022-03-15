@@ -20,13 +20,16 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.foo.smack.Model.Channel
 import com.foo.smack.R
 import com.foo.smack.Services.AuthService
+import com.foo.smack.Services.MessageService
 import com.foo.smack.Services.UserDataService
 import com.foo.smack.Utilities.BROADCAST_USER_DATA_CHANGE
 import com.foo.smack.Utilities.SOCKET_URL
 import com.google.android.material.navigation.NavigationView
 import io.socket.client.IO
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
@@ -42,6 +45,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        socket.connect()
+        socket.on("channelCreated",onNewChannel)
 
         //hideKeyboard()
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
@@ -66,17 +72,15 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
             IntentFilter(BROADCAST_USER_DATA_CHANGE))
-        socket.connect()
+
         super.onResume()
+
     }
 
-    override fun onPause() {
-        super.onPause()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
-    }
 
     override fun onDestroy() {
         socket.disconnect()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
         super.onDestroy()
     }
 
@@ -127,10 +131,9 @@ class MainActivity : AppCompatActivity() {
 
                 val channelName = nameTextView.text.toString()
                 val channelDesc = descTextView.text.toString()
-                //println("Dave: $channelName desc: $channelDesc")
                 //sending information from client to API
                 socket.emit("newChannel", channelName, channelDesc)
-
+                println("Dave add channel clicked")
 
             }.setNegativeButton("Cancel") { dialog, which ->
 
@@ -138,6 +141,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private val onNewChannel = Emitter.Listener { args ->
+        //println( args[0] as String)
+        //io.emit("channelCreated", channel.name, channel.description, channel.id);
+        println("Dave emitter is listening")
+        runOnUiThread {
+            println("Dave emitter is sending something")
+            val channelName = args[0] as String
+            val channelDescription = args[1] as String
+            val channelId = args[2] as String
+
+            val newChannel = Channel(channelName,channelDescription,channelId)
+            MessageService.channels.add(newChannel)
+            println("Dave " + newChannel.name)
+            println("Dave " + newChannel.description)
+            println("Dave "+ newChannel.id)
+        }
+    }
 
 
     fun sendMsgBtnClicked(view: View){
